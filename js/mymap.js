@@ -24,28 +24,19 @@ function locate(){
 }
 
 function addRoutePoint(latlng){ 
-  map.addMarker({
-    lat: latlng.lat(),
-    lng: latlng.lng()
-  });
-  routePoints.push(latlng);
+    map.addMarker({
+      lat: latlng.lat(),
+      lng: latlng.lng()
+    });
+    routePoints.push(latlng);
 
-  if (routePoints.length > 1){  
-    var routeWayPoints = [];
-    for (var i=1; i<routePoints.length-1; i++){ 
-      routeWayPoints.push({location:routePoints[i],stopover:true});
-    }
-    console.log("way points are"+routeWayPoints);
-    map.drawRoute({
-      origin: [routePoints[0].lat(), routePoints[0].lng()],
-      waypoints: routeWayPoints,
-      destination: [routePoints[routePoints.length-1].lat(), routePoints[routePoints.length-1].lng()],
+    map.drawCrazyRoute({
+      routePoints: routePoints,
       travelMode: 'biking',
       strokeColor: '#131540',
       strokeOpacity: 0.6,
       strokeWeight: 6
     });
-  }
 }
         
 function initilizeGmaps(){ 

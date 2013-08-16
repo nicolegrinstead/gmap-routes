@@ -1,0 +1,35 @@
+function addRoutePoint(latlng){ 
+  map.addMarker({
+    lat: latlng.lat(),
+    lng: latlng.lng()
+  });
+  routePoints.push(latlng);
+
+  if (routePoints.length > 1){  
+    var i,j,chunk = 10;
+    var splitRoutes = [];
+    for (i=0,j=routePoints.length; i<j; i+=chunk) {
+        splitRoutes.push(routePoints.slice(i,i+chunk+1));
+    }
+
+    console.log(splitRoutes);
+
+    for (var k=0; k<splitRoutes.length; k++){ 
+      var currentRoute = splitRoutes[k];
+      var routeWayPoints = [];
+      for (var i=1; i<currentRoute.length-1; i++){ 
+        routeWayPoints.push({location:currentRoute[index],stopover:true});
+      }
+      console.log("here?");
+      map.drawRoute({
+        origin: [currentRoute[0].lat(), currentRoute[0].lng()],
+        waypoints: routeWayPoints,
+        destination: [currentRoute[currentRoute.length-1].lat(), currentRoute[currentRoute.length-1].lng()],
+        travelMode: 'biking',
+        strokeColor: '#131540',
+        strokeOpacity: 0.6,
+        strokeWeight: 6
+      });
+    }
+  }
+}

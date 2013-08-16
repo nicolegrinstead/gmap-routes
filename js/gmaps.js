@@ -1289,6 +1289,55 @@ GMaps.prototype.getElevations = function(options) {
 
 GMaps.prototype.cleanRoute = GMaps.prototype.removePolylines;
 
+GMaps.prototype.drawCrazyRoute = function(options) {
+  var self = this;
+  var routePoints = options.routePoints;
+
+  if (routePoints.length > 1){  
+    var i,j,chunk = 9;
+    var splitRoutes = [];
+    for (i=0,j=routePoints.length; i<j; i+=chunk) {
+        splitRoutes.push(routePoints.slice(i,i+chunk+1));
+    }
+
+    console.log(splitRoutes);
+
+    for (var k=0; k<splitRoutes.length; k++){ 
+      var currentRoute = splitRoutes[k];
+      var routeWayPoints = [];
+      for (var i=1; i<currentRoute.length-1; i++){ 
+        routeWayPoints.push({location:currentRoute[i],stopover:true});
+      }
+
+      this.getRoutes({
+        origin: [currentRoute[0].lat(), currentRoute[0].lng()],
+        destination: [currentRoute[currentRoute.length-1].lat(), currentRoute[currentRoute.length-1].lng()],
+        travelMode: options.travelMode,
+        waypoints: routeWayPoints,
+        unitSystem: options.unitSystem,
+        callback: function(e) {
+          if (e.length > 0) {
+            self.drawPolyline({
+              path: e[e.length - 1].overview_path,
+              strokeColor: options.strokeColor,
+              strokeOpacity: options.strokeOpacity,
+              strokeWeight: options.strokeWeight
+            });
+            
+            if (options.callback) {
+              options.callback(e[e.length - 1]);
+            }
+          }
+        }
+      });
+
+    }
+  }
+
+
+
+};
+
 GMaps.prototype.drawRoute = function(options) {
   var self = this;
   console.log("in draw routes");
@@ -1300,7 +1349,6 @@ GMaps.prototype.drawRoute = function(options) {
     unitSystem: options.unitSystem,
     callback: function(e) {
       if (e.length > 0) {
-        console.log("waypoints in gmaps" + options.waypoints);
         self.drawPolyline({
           path: e[e.length - 1].overview_path,
           strokeColor: options.strokeColor,
